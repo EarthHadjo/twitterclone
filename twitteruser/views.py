@@ -1,13 +1,12 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from twitteruser.models import TwitterUser
 from twitteruser.models import Profile
-from twitteruser.models import SignupForm
+# from twitteruser.models import 
 from notification.models import Notification
 from twitteruser.models import Tweet
 
 
-# Create your views here.
+@login_required
 def signup_view(request):
     html = "generic.html"
     header = "Signup"
@@ -17,7 +16,7 @@ def signup_view(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user = TwitterUser.objects.create_user(
+            user = Profile.objects.create_user(
                 username=data["username"], password=data["password"])
             login_required(request, user)
             Profile.objects.create(
@@ -34,7 +33,7 @@ def signup_view(request):
 
 def profile_view(request, username):
     html = "twitteruser.html"
-    targeteduser = TwitterUser.objects.filter(username=username).first()
+    targeteduser = Profile.objects.filter(username=username).first()
     targeteduser_tweets = Tweet.objects.filter(
         user=targeteduser).order_by("-date")
     num_tweets = len(targeteduser_tweets)
@@ -42,7 +41,7 @@ def profile_view(request, username):
     follow_status_button = None
     data = {}
     if request.user.is_authenticated:
-        currentuser = TwitterUser.objects.filter(
+        currentuser = Profile.objects.filter(
             username=request.user.twitteruser).first()
         notification = Notification.objects.filter(username=currentuser).count()
         if targeteduser not in currentuser.following.get_queryset():

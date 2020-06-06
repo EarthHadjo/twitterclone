@@ -1,5 +1,5 @@
 from django.db import models
-from tweet.models import Profile
+from twitteruser.models import Profile
 from django.utils import timezone
 
 
