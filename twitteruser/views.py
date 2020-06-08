@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from twitteruser.models import Profile
-# from twitteruser.models import 
 from notification.models import Notification
-from twitteruser.models import Tweet
+from tweet.models import Tweet
 
 
 @login_required
@@ -44,7 +43,7 @@ def profile_view(request, username):
         currentuser = Profile.objects.filter(
             username=request.user.twitteruser).first()
         notification = Notification.objects.filter(username=currentuser).count()
-        if targeteduser not in currentuser.following.get_queryset():
+        if targeteduser not in currentuser.following.all():
             follow_status_button = "Follow"
         else:
             follow_status_button = "Unfollow"
@@ -58,3 +57,10 @@ def profile_view(request, username):
                 "num_tweets": num_tweets, "num_followers": num_followers}
     return render(request, html, data)
 
+def follow_view(request, username):
+    pass
+
+
+def homepage(request):
+    #todo
+    
