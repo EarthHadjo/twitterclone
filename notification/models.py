@@ -1,11 +1,11 @@
 from django.db import models
-from twitteruser.models import Profile
+from twitteruser.models import TwitterUser
 from tweet.models import Tweet
 
 
 class Notification(models.Model):
     username = models.ForeignKey(
-        Profile, on_delete=models.CASCADE)
+        TwitterUser, on_delete=models.CASCADE)
     tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
     was_viewed = models.BooleanField(default=False)
 

@@ -1,66 +1,80 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, reverse, HttpResponseRedirect
+from twitteruser.models import TwitterUser
+from authentication.forms import SignupForm
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
-from twitteruser.models import Profile
-from notification.models import Notification
 from tweet.models import Tweet
 
 
 @login_required
-def signup_view(request):
-    html = "generic.html"
-    header = "Signup"
-    form = None
-    button_value = "Signup"
+def index(request):
+    info = settings.AUTH_USER_MODEL
+    return render(request, 'index.htm', {'info': info})
+
+
+def signup(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            user = Profile.objects.create_user(
-                username=data["username"], password=data["password"])
-            login_required(request, user)
-            Profile.objects.create(
-                username=data["username"],
-                display_name=data["display_name"],
-                user=user
+            user = TwitterUser.objects.create_user(
+                username=data['username'],
+                display_name=data['display_name'],
+                password=data['password1'],
             )
-            return HttpResponseRedirect(redirect("home"))
-    else:
-        form = SignupForm()
-    return render(request, html, {"header": header, "form": form,
-                                  "button_value": button_value})
+            user.save()
+            login(request, user)
+            return HttpResponseRedirect(reverse('homepage'))
+    form = SignupForm()
+    return render(request, 'SignupForm.html', {'form': form})
 
 
-def profile_view(request, username):
-    html = "twitteruser.html"
-    targeteduser = Profile.objects.filter(username=username).first()
-    targeteduser_tweets = Tweet.objects.filter(
-        user=targeteduser).order_by("-date")
-    num_tweets = len(targeteduser_tweets)
-    num_followers = targeteduser.following.count()
-    follow_status_button = None
-    data = {}
+@login_required
+def profile_view(request, id):
+    tweets = Tweet.objects.filter(author=id)
+    counttweets = tweets.count()
+    user = TwitterUser.objects.get(id=id)
+    followers = user.followers.all()
+    countfollowers = followers.count()
     if request.user.is_authenticated:
-        currentuser = Profile.objects.filter(
-            username=request.user.twitteruser).first()
-        notification = Notification.objects.filter(username=currentuser).count()
-        if targeteduser not in currentuser.following.all():
-            follow_status_button = "Follow"
+        myfollowers = request.user.followers.all()
+        if user in myfollowers:
+            is_following = True
         else:
-            follow_status_button = "Unfollow"
-        data = {"targeteduser": targeteduser, "tweets": targeteduser_tweets,
-                "num_tweets": num_tweets,
-                "follow_status_button": follow_status_button,
-                "num_followers": num_followers,
-                "notification": notification}
-    else:
-        data = {"targeteduser": targeteduser, "tweets": targeteduser_tweets,
-                "num_tweets": num_tweets, "num_followers": num_followers}
-    return render(request, html, data)
+            is_following = False
+        return render(
+                request,
+                'authorinfo.html', {
+                'tweets': tweets,
+                'counttweets': counttweets,
+                'user': user,
+                'countfollowers': countfollowers,
+                'myfollowers': myfollowers,
+                'is_following': is_following,
+                })
+    return render(
+                request,
+                'authorinfo.html', {
+                'tweets': tweets,
+                'counttweets':counttweets,
+                'user': user,
+                'countfollowers': countfollowers,
+                })
 
-def follow_view(request, username):
-    pass
+
+@login_required
+def follow_view(request, id):
+    user = request.user
+    follow = TwitterUser.objects.get(id=id)
+    user.followers.add(follow)
+    user.save()
+    return HttpResponseRedirect(reverse('authorinfo', args={id,}))
 
 
-def homepage(request):
-    #todo
-    
+@login_required
+def unfollow(request, id):
+    user = request.user
+    follow = TwitterUser.objects.get(id=id)
+    user.followers.remove(follow)
+    user.save()
+    return HttpResponseRedirect(reverse('authorinfo', args={id,}))

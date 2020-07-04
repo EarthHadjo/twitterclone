@@ -1,0 +1,16 @@
+
+{% comment %} {% block content %} {% endcomment %}
+<h1>Login Form</h1>
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+
+</form action>
+
+Sign Up Here <a href="/signup/">sign up</a>
+
+
+{% comment %} {% endblock %} {% endcomment %}
+

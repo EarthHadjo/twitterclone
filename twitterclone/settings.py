@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 LOGIN_URL = '/login/'
-LOGOUT_URL = "/"
+
 
 # Application definition
 
@@ -122,5 +122,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+
+APP_PATH_AUTH = BASE_DIR + '/authentication/',
+APP_PATH_NOT = BASE_DIR + '/notification/',
+APP_PATH_TWEET = BASE_DIR + '/tweet/',
+APP_PATH_USER = BASE_DIR + '/twitteruser',
+
+
+
 STATIC_URL = '/static/'
-AUTH_USER_MODEL = 'twitteruser.Profile'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    (os.path.join(BASE_DIR, 'static')),
+    (os.path.join(APP_PATH_AUTH[0], 'static')),
+    (os.path.join(APP_PATH_NOT[0], 'static')),
+    (os.path.join(APP_PATH_TWEET[0], 'static')),
+    (os.path.join(APP_PATH_USER[0], 'static'))
+]
+
+AUTH_USER_MODEL = 'twitteruser.TwitterUser'
