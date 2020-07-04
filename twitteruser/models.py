@@ -18,4 +18,3 @@ class TwitterUser(AbstractUser):
         if not self.slug:
             self.slug = slugify(self.username)
         return super().save(*args, **kwargs)
-    

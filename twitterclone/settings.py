@@ -59,7 +59,7 @@ ROOT_URLCONF = 'twitterclone.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,7 +127,6 @@ APP_PATH_AUTH = BASE_DIR + '/authentication/',
 APP_PATH_NOT = BASE_DIR + '/notification/',
 APP_PATH_TWEET = BASE_DIR + '/tweet/',
 APP_PATH_USER = BASE_DIR + '/twitteruser',
-
 
 
 STATIC_URL = '/static/'

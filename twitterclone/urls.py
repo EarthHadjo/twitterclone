@@ -22,7 +22,7 @@ urlpatterns = [
     path("", index, name='homepage'),
     path("admin/", admin.site.urls),
     path("signup/", signup),
-    path("<str:username>/", profile_view),
+    path("profile/<str:username>/", profile_view),
     path("follow/<str:username>/", follow_view),
 ]
 

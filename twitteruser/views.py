@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse, HttpResponseRedirect
 from twitteruser.models import TwitterUser
 from authentication.forms import SignupForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from tweet.models import Tweet
 
@@ -9,7 +9,7 @@ from tweet.models import Tweet
 @login_required
 def index(request):
     info = settings.AUTH_USER_MODEL
-    return render(request, 'index.htm', {'info': info})
+    return render(request, 'index.html', {'info': info})
 
 
 def signup(request):
@@ -56,7 +56,7 @@ def profile_view(request, id):
                 request,
                 'authorinfo.html', {
                 'tweets': tweets,
-                'counttweets':counttweets,
+                'counttweets': counttweets,
                 'user': user,
                 'countfollowers': countfollowers,
                 })

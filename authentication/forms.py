@@ -9,8 +9,9 @@ class UserForm(forms.ModelForm):
 
 
 class LoginForm(forms.ModelForm):
-    username = forms.CharField(max_length=50)
-    password = forms.CharField(widget=forms.PasswordInput)
+    class Meta:
+        model = TwitterUser
+        fields = ['username', 'password']
 
 
 class SignupForm(forms.ModelForm):
@@ -18,4 +19,3 @@ class SignupForm(forms.ModelForm):
         model = TwitterUser
         fields = ['username', 'first_name',
                   'last_name', 'password', 'email']
-
